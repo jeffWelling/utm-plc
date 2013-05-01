@@ -1,0 +1,20 @@
+
+
+These are the CC commands to check if a Web Filter is logging pages:
+
+cc get http
+# grab the reference for 'profiles'
+REF1
+
+cc get_object REF1
+#grab the reference for 'cff_profiles'
+REF2
+
+cc get_object REF2
+#grab the reference for 'action'
+REF3
+
+cc get_object REF3
+#look for log_access and log_block.
+
+
