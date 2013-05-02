@@ -1,21 +1,44 @@
 #!/usr/bin/env ruby
-require 'net/ssh'
 require 'pty'
+require 'timeout'
 
 host='192.168.0.1'
+port=22
 lu_password='vanc0uver'
-ru_password=''
+ru_password='vanc0uver'
 
-Net::SSH.start( host, 'loginuser', :password=>lu_password ) {|ssh|
-	puts ssh.PTY.spawn "echo 'hello world'"	
-	http= ssh.exec!( 'cc get http' )
-}
-
-def till_prompt( prompt, cout )
+def until_prompt( prompt )
 	buffer= ""
-	loop {
-		buffer << cout.getc.chr
-		break if buffer =~ /Password:/
-	}
-	buffer
+	begin
+		Timeout.timeout( 10 ) {
+			loop do
+				buffer << $out.getc.chr
+				break if buffer =~ Regexp.new(prompt)
+			end
+		}
+		buffer
+	rescue
+		printf buffer
+	end	
 end
+
+PTY.spawn("ssh -p #{port} loginuser@#{host}") do |stdout,stdin,pid|
+	$out=stdout
+	printf until_prompt( 'password:' )
+	stdin.printf( lu_password + "\n" )
+	printf until_prompt( '/home/login >' )
+	stdin.printf( "su\n" )
+	printf until_prompt( 'Password:' )
+	stdin.printf( "#{ru_password}\n" )
+	printf until_prompt( '/home/login #' )
+	stdin.printf( "cc get http\n" )
+	printf until_prompt( ":/home/login #" )
+
+	stdin.printf( "exit\n" )
+	printf until_prompt( ":/home/login >" )
+	stdin.printf( "exit\n" )
+	#printf until_prompt( ":~$" )
+  
+
+end
+
