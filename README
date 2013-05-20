@@ -18,3 +18,11 @@ cc get_object REF3
 #look for log_access and log_block.
 
 
+
+#Now, to get this per proxy profile;
+
+#get a list of all proxy profiles
+cc get http
+#grab all references under 'profiles'
+
+#rinse repeat abovesdfhsdfh
