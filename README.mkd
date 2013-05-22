@@ -84,6 +84,9 @@ Check the output of `echo $PATH`, and compare it against `which bin/plc`.  Is th
 in your path?  If not, this will be your problem.  To resolve this, append that directory to your path.  
 How exactly to do this is left as an exercise for the reader.
 
+If you're absolutley positely pinkey-swearsey sure that your $PATH contains the right directory, and it
+still isn't doing what you think it should be doing, [file a bug](https://github.com/jeffWelling/utm-plc/issues).
+
 ### Author ###
 
 Jeff Welling
