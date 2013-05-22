@@ -78,6 +78,12 @@ FilterAction Three is configured to not log either accessed or blocked pages.  H
 		Please activate the 'Log Accessed Pages' option for the Web Filter Action named: FilterAction One
 		Done
 
+### It doesn't work ###
+
+Check the output of `echo $PATH`, and compare it against `which bin/plc`.  Is the directory that plc is in,
+in your path?  If not, this will be your problem.  To resolve this, append that directory to your path.  
+How exactly to do this is left as an exercise for the reader.
+
 ### Author ###
 
 Jeff Welling
