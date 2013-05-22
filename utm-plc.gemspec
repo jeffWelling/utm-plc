@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description="This tool logs in to your UTM and interacts with 'cc' to check the configuration of every web filter configuration in use and list the ones that are not configured to log accessed and blocked pages."
 
   #s.add_development_dependency "rspec"
-  s.files       = Dir.glob("{bin,lib}/*") + %w( LICENSE README )
+  s.files       = Dir.glob("{bin,lib}/*") + %w( LICENSE README.mkd )
   s.executables = ['plc']
   s.require_path= 'lib'
 end
