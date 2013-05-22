@@ -35,7 +35,8 @@ Here, let me show you.  In this configuration, the main web filter (under Web Pr
 is configured to log accessed pages and to not log blocked pages.  FilterAction One is configured to log
 blocked pages, but not accessed pages.  FilterAction Two is configured to log accessed pages but not blocked
 pages.  The Default content filter block action is configured to log accessed but not blocked pages. 
-FilterAction Three is configured to not log either accessed or blocked pages.  Here we go:
+FilterAction Three is configured to not log either accessed or blocked pages, but isn't in use by any Filter
+Profile.  Here we go:
 
 		$ ./plc.rb
 		What port?: 22
@@ -78,13 +79,16 @@ FilterAction Three is configured to not log either accessed or blocked pages.  H
 		Please activate the 'Log Accessed Pages' option for the Web Filter Action named: FilterAction One
 		Done
 
+Note that FilterAction Three doesn't make an appearance.  This is because it isn't being used by any of the
+current Web Filter or Proxy Profiles, so no traffic is hitting it, so the tool doesn't [see or] report it.
+
 ### It doesn't work ###
 
 Check the output of `echo $PATH`, and compare it against `which bin/plc`.  Is the directory that plc is in,
 in your path?  If not, this will be your problem.  To resolve this, append that directory to your path.  
 How exactly to do this is left as an exercise for the reader.
 
-If you're absolutley positely pinkey-swearsey sure that your $PATH contains the right directory, and it
+If you're absolutely positively pinkey-swearsey sure that your $PATH contains the right directory, and it
 still isn't doing what you think it should be doing, [file a bug](https://github.com/jeffWelling/utm-plc/issues).
 
 ### Author ###
