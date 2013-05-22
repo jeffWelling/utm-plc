@@ -24,8 +24,8 @@ require 'pp'
 
 def _host; 					prompt('Which host?: ') end
 def _port;					prompt('What port?: ')  end
-def _lu_password;   disable_echo {prompt('What is the password for loginuser?: ')} end
-def _ru_password; 	disable_echo {prompt('What is the password for root?: ')} end
+def _lu_password;   prompt('What is the password for loginuser?: ', true) end
+def _ru_password; 	prompt('What is the password for root?: ', true) end
 
 $logging=false
 $debugging=false
@@ -172,12 +172,20 @@ def get_object x
 	get x, 'get_object'
 end
 
+def fingerprint_prompt? string
+	!string[/\(yes\/no\)\?/].nil?
+end
+
 def until_prompt( prompt )
 	buffer= ""
 	begin
-		Timeout.timeout( 30 ) {
+		Timeout.timeout( 5 ) {
 			loop do
 				buffer << $out.getc.chr
+				if fingerprint_prompt?(buffer)
+					printf "SSH Fingerprint prompt detected.\nPlease SSH to this system at least once before using this program to verify the SSH fingerprint manually, then run this program again.\n\n"
+					exit
+				end
 				break if buffer =~ Regexp.new(prompt)
 			end
 		}
@@ -191,9 +199,15 @@ def until_prompt( prompt )
 	end	
 end
 
-def prompt *question
-	printf *question
-	(s=gets.strip).empty? ? prompt(*question) : s
+def prompt question, password=false
+	printf question
+	if password==true
+		disable_echo {
+			(s=gets.strip).empty? ? prompt(question) : s
+		}
+	else
+		(s=gets.strip).empty? ? prompt(question) : s
+	end
 end
 
 def run 
