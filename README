@@ -1,28 +1,92 @@
 
+## UTM plc -- Proxy Logging Checker ##
 
-These are the CC commands to check if a Web Filter is logging pages:
+This is a brief little script that logs in to your UTM via SSH using passwords that it prompts you for, and
+then proceeds to loop over every Web Filter and proxy profile looking for any action that does not have both
+logging options enabled.  At the end of the run, it prints a list of suggested corrections to turn logging
+back on on all actions.  It is intended for users of advanced configurations where there are many filter
+assignments and filter actions in a complex configuration.  This tool will loop over all of the filter actions
+that are in use and will list the ones that do not have logging enabled.
 
-cc get http
-# grab the reference for 'profiles'
-REF1
+### Prerequisites ###
 
-cc get_object REF1
-#grab the reference for 'cff_profiles'
-REF2
+You will need Ruby to run this script as it is a RubyGem.  You will also need to have Shell Access enabled
+your UTM, you must be in the list of Allowed Networks, and you must know what the passwords are for the
+root and loginuser accounts, which you can set under the Shell Access tab under Management -> System Settings.
 
-cc get_object REF2
-#grab the reference for 'action'
-REF3
+### How It Works ###
 
-cc get_object REF3
-#look for log_access and log_block.
+Here is a general overview of how it works.
+
+		1) SSH into the appliance as loginuser
+		2) Become root
+		3) Run 'cc get http' to get a dump of the Web Filter configuration
+		4) For each profile listed, 
+			-) Look up the profile with `cc get_oject REF_...`
+			-) For every 'cff_profiles' (aka Filter Assignment), 
+				-) Look up that cff_profile `cc get_object REF_...`
+				-) Look up the 'action' with `cc get_object REF_...`
+				-) If the action doesn't log both accessed and logged pages, add to the list of results
+		5) Print results.
+
+### What does it look like? ###
+
+Here, let me show you.  In this configuration, the main web filter (under Web Protection -> Web Filter)
+is configured to log accessed pages and to not log blocked pages.  FilterAction One is configured to log
+blocked pages, but not accessed pages.  FilterAction Two is configured to log accessed pages but not blocked
+pages.  The Default content filter block action is configured to log accessed but not blocked pages. 
+FilterAction Three is configured to not log either accessed or blocked pages.  Here we go:
+
+		$ ./plc.rb
+		What port?: 22
+		Which host?: 192.168.0.1
+		Logging in as loginuser...
+		What is the password for loginuser?: 
+		Using su to become root...
+		What is the password for root?: 
+		Am now root.
+		Found 3 profiles:
+									 -- REF_DefaultHTTPProfile
+									 -- REF_HttProConta19216
+									 -- REF_HttProConta192162
+
+		Checking profile: Default Proxy
+		Found cff_profiles: 
+									 -- REF_DefaultHTTPCFFProfile
+		Got the assignment for that profile...
+		Got the action for that assignment...
+		Found an action that isn't logging everything: Default content filter action
+
+		Checking profile: Profile One
+		Found cff_profiles: 
+									 -- REF_HttCffAllowFromAdmin
+		Got the assignment for that profile...
+		Got the action for that assignment...
+		Found an action that isn't logging everything: FilterAction Two
+
+		Checking profile: Profile Two
+		Found cff_profiles: 
+									 -- REF_HttCffAllowFromJeff
+		Got the assignment for that profile...
+		Got the action for that assignment...
+		Found an action that isn't logging everything: FilterAction One
 
 
+		Printing results:
+		Please activate the 'Log Blocked Pages' option for the Web Filter Action named: Default content filter action
+		Please activate the 'Log Blocked Pages' option for the Web Filter Action named: FilterAction Two
+		Please activate the 'Log Accessed Pages' option for the Web Filter Action named: FilterAction One
+		Done
 
-#Now, to get this per proxy profile;
+### Author ###
 
-#get a list of all proxy profiles
-cc get http
-#grab all references under 'profiles'
+Jeff Welling
+jeff.welling@gmail.com
 
-#rinse repeat abovesdfhsdfh
+### License ###
+
+This software is published under GPLv3.  For an alternative license arrangement feel free to email me, but I make no guarantees.
+
+### Contributing ###
+
+Contributions are welcome by submitting a pull request, or by emailing your patch to the above email address.

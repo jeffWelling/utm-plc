@@ -1,4 +1,23 @@
 #!/usr/bin/env ruby
+# This file is part of UTM_plc.
+# Copyright 2013 Jeff Welling (jeff.welling@gmail.com)
+# 
+# UTM_plc is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# UTM_plc is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with tget. If not, see <http://www.gnu.org/licenses/>.
+# 
+# Add the library from the source tree to the front of the load path.
+# This allows tget to run without first installing the tget gem, which is
+# important when testing multiple branches of development.
 require 'pty'
 require 'timeout'
 require 'pp'
@@ -201,8 +220,4 @@ def run
 		$in=old_in
 	}
 	log 'Done'
-end
-
-if __FILE__ == './plc.rb'
-	run 
 end

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+#Add the library from the source tree if exists, this allows
+#testing without installing the gem first
+if File.exist? File.join('lib', 'utm-plc.rb')
+    $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+end
+require 'utm-plc'
+
+run
