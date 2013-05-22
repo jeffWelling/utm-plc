@@ -14,6 +14,16 @@ You will need Ruby to run this script as it is a RubyGem.  You will also need to
 your UTM, you must be in the list of Allowed Networks, and you must know what the passwords are for the
 root and loginuser accounts, which you can set under the Shell Access tab under Management -> System Settings.
 
+### Installation ###
+
+To install:
+
+    gem install utm-plc
+
+From there, as long as the path to your gems bin directory is in your $PATH, you should be able to run it:
+
+    plc
+
 ### How It Works ###
 
 Here is a general overview of how it works.
