@@ -84,6 +84,13 @@ def extract_profiles http
 	}
 end
 
+def extract_exceptions http
+	exceptions=http[/'exceptions' => \[[^\]]*/].gsub("'exceptions' => \[",'').split(',').collect {|l|
+		l.gsub(/'/,'').strip 
+	}
+	exceptions.each {|e| log "               -- "+e }
+end
+
 def extract_cff_profiles raw_proxy_profile
 	log "Found cff_profiles: "
 	cff_p=raw_proxy_profile[/'cff_profiles' => \[[^\]]*/].gsub( "'cff_profiles' => \[",'' ).
@@ -96,51 +103,97 @@ def extract_action raw_assignment
 	raw_assignment[/'action' => '[^']*/].gsub(/'action' => '/,'').strip
 end
 
+def search_exceptions exceptions
+	if exceptions.class!=Array
+		raise ArgumentError "search_exceptions(exceptions): 'exceptions' must be an array but it's something else, possibly a cheeseburger..."
+	elsif exceptions.empty?
+		raise ArgumentError "search_exceptions(exceptions): 'exceptions' must be a non-empty array! What have you done?!?"
+	end
+
+	results={:exceptions=>[]}
+	exceptions.each {|exception|
+		debug raw_exception=get_object(exception)
+		log "Checking exception: #{exception}"
+		if _e_log_accessed?(raw_exception)
+			results[:exceptions] << exception
+		elsif _e_log_blocked?(raw_exception)
+			results[:exceptions] << exception
+		end
+	}
+	results
+end
+
 def search_profiles profiles
 	if profiles.class!=Array
 		raise ArgumentError "search_profiles(profiles): 'profiles' must be an array but it's something else, possibly a cheeseburger..."
 	elsif profiles.empty?
 		raise ArgumentError "search_profiles(profiles): 'profiles' must be a non-empty array! What have you done?!?"
 	end
-	results=[]
+	results={:profiles=>[]}
 	profiles.each {|profile|
 		debug raw_proxy_profile=get_object(profile)
-		log "\nChecking profile: #{get_name(raw_proxy_profile)}"
+		log "Checking profile: #{get_name(raw_proxy_profile)}"
 		debug raw_assignment=get_object( extract_cff_profiles(raw_proxy_profile) )
 		log "Got the assignment for that profile..."
 		action= get_action(raw_assignment)
 		raw_action= get_object( extract_action(raw_assignment) )
 		log "Got the action for that assignment..."
 
-		if !log_accessed?(raw_action) || !log_blocked?(raw_action)
+		if !_p_log_accessed?(raw_action) || !_p_log_blocked?(raw_action)
 			log "Found an action that isn't logging everything: #{get_name(raw_action)}"
-			results << raw_action
+			results[:profiles] << raw_action
 		end
 	}
 	results
 end
 
-def log_accessed? action
+def _p_log_accessed? action
 	if action[/'log_access' => \d/].nil?
-		raise ArgumentError "log_accessed?(action): action doesn't contain a 'log_access' attribute?"
+		raise ArgumentError "_p_log_accessed?(action): action doesn't contain a 'log_access' attribute?"
 	end
 	action[/'log_access' => \d/].gsub(/'log_access' => /,'')=='1'
 end
 
-def log_blocked? action
+def _p_log_blocked? action
 	if action[/'log_blocked' => \d/].nil?
-		raise ArgumentError "log_blocked?(action): action doesn't contain a 'log_blocked' attribute?"
+		raise ArgumentError "_p_log_blocked?(action): action doesn't contain a 'log_blocked' attribute?"
 	end
 	action[/'log_blocked' => \d/].gsub(/'log_blocked' => /,'')=='1'
 end
 
+def _e_log_accessed? raw_exception
+	raw_exception[/'skiplist' => \[[^\]]*/].gsub("'skiplist' => \[",'').split(',').collect {|l|
+		l.gsub(/'/,'').strip
+	}.include? 'log_access'
+end
+
+def _e_log_blocked? raw_exception
+	raw_exception[/'skiplist' => \[[^\]]*/].gsub("'skiplist' => \[",'').split(',').collect {|l|
+		l.gsub(/'/,'').strip
+	}.include? 'log_blocked'
+end
+
 def print_results results
 	log "\n\nPrinting results:"
-	results.each {|action|
-		if !log_accessed?(action)
-			log "Please activate the 'Log Accessed Pages' option for the Web Filter Action named: #{get_name(action)}"
-		elsif !log_blocked?(action)
-			log "Please activate the 'Log Blocked Pages' option for the Web Filter Action named: #{get_name(action)}"
+	results.each {|x,y|
+		if x==:profiles
+			y.each {|z|
+				if !_p_log_accessed?(z)
+					log "Please activate the 'Log Accessed Pages' option for the Web Filter Action named: #{get_name(z)}"
+				end
+				if !_p_log_blocked?(z)
+					log "Please activate the 'Log Blocked Pages' option for the Web Filter Action named: #{get_name(z)}"
+				end
+			}
+		elsif x==:exceptions
+			y.each {|z|
+				if _e_log_accessed?(get_object(z))
+				 log "Please deactivate the option to skip logging of accessed pages for the Exception named: #{get_name(get_object(z))}"
+				end
+				if _e_log_blocked?(get_object(z))
+				 log "Please deactivate the option to skip logging of blocked pages for the Exception named: #{get_name(get_object(z))}"
+				end
+			}
 		end
 	}
 end
@@ -222,7 +275,8 @@ def run
 
 		#Because the main Web Filter is treated as a profile, this
 		#will operate on all Web Filters and proxy profiles.
-	  results= search_profiles( extract_profiles( get('http') ) )
+	  results= search_profiles( extract_profiles( http=get('http') ) )
+		results.merge!( search_exceptions( extract_exceptions( http ) ) )
 
 		print_results( results )
 
