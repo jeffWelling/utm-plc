@@ -236,7 +236,7 @@ def until_prompt( prompt )
 			loop do
 				buffer << $out.getc.chr
 				if fingerprint_prompt?(buffer)
-					printf "SSH Fingerprint prompt detected.\nPlease SSH to this system at least once before using this program to verify the SSH fingerprint manually, then run this program again.\n\n"
+					printf "SSH Fingerprint prompt detected.\nPlease SSH to this system as loginuser at least once before using this program.\n\n"
 					exit
 				end
 				break if buffer =~ Regexp.new(prompt)
