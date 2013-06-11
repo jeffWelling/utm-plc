@@ -55,7 +55,7 @@ pages.  The Default content filter block action is configured to log accessed bu
 FilterAction Three is configured to not log either accessed or blocked pages, but isn't in use by any Filter
 Profile.  Here we go:
 
-    jeff@dev> bin/plc                                                                                                                                                                                                         ~/Projects/utm-plc
+    jeff@dev> bin/plc
     What port?: 22
     Which host?: 192.168.0.1
     Logging in as loginuser...

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name      = "utm-plc"
-  s.version   = '0.2.1'
+  s.version   = '0.2.2'
   s.platform  = Gem::Platform::RUBY
   s.date      = Time.now.to_s
   s.authors   = ["Jeff Welling"]
