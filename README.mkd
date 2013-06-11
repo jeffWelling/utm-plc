@@ -55,46 +55,44 @@ pages.  The Default content filter block action is configured to log accessed bu
 FilterAction Three is configured to not log either accessed or blocked pages, but isn't in use by any Filter
 Profile.  Here we go:
 
-		$ plc
-		What port?: 22
-		Which host?: 192.168.0.1
-		Logging in as loginuser...
-		What is the password for loginuser?: 
-		Using su to become root...
-		What is the password for root?: 
-		Am now root.
-		Found 3 profiles:
-									 -- REF_DefaultHTTPProfile
-									 -- REF_HttProConta19216
-									 -- REF_HttProConta192162
-
-		Checking profile: Default Proxy
-		Found cff_profiles: 
-									 -- REF_DefaultHTTPCFFProfile
-		Got the assignment for that profile...
-		Got the action for that assignment...
-		Found an action that isn't logging everything: Default content filter action
-
-		Checking profile: Profile One
-		Found cff_profiles: 
-									 -- REF_HttCffAllowFromAdmin
-		Got the assignment for that profile...
-		Got the action for that assignment...
-		Found an action that isn't logging everything: FilterAction Two
-
-		Checking profile: Profile Two
-		Found cff_profiles: 
-									 -- REF_HttCffAllowFromJeff
-		Got the assignment for that profile...
-		Got the action for that assignment...
-		Found an action that isn't logging everything: FilterAction One
+    jeff@dev> bin/plc                                                                                                                                                                                                         ~/Projects/utm-plc
+    What port?: 22
+    Which host?: 192.168.0.1
+    Logging in as loginuser...
+    What is the password for loginuser?:
+    Using su to become root...
+    What is the password for root?:
+    Am now root.
+    Checking profile: Default Proxy
+    Got the assignment for that profile...
+    Got the action for that assignment...
+    Found an action that isn't logging everything: Default content filter action
+    Checking profile: Profile One
+    Got the assignment for that profile...
+    Got the action for that assignment...
+    Found an action that isn't logging everything: FilterAction Two
+    Checking profile: Profile Two
+    Got the assignment for that profile...
+    Got the action for that assignment...
+    Found an action that isn't logging everything: FilterAction One
+    Checking exception: Microsoft Windows Update
+    Checking exception: Apple Update
+    Checking exception: Adobe Software Update
+    Checking exception: iphone/iPad youtube
+    Checking exception: Nokia Ovi Suite/Store
+    Checking exception: Sophos LiveConnect
+    Checking exception: Trendmicro Update
+    Checking exception: Sophos Services
 
 
-		Printing results:
-		Please activate the 'Log Blocked Pages' option for the Web Filter Action named: Default content filter action
-		Please activate the 'Log Blocked Pages' option for the Web Filter Action named: FilterAction Two
-		Please activate the 'Log Accessed Pages' option for the Web Filter Action named: FilterAction One
-		Done
+    Printing results:
+    Please activate the 'Log Blocked Pages' option for the Web Filter Action named: Default content filter action
+    Please activate the 'Log Blocked Pages' option for the Web Filter Action named: FilterAction Two
+    Please activate the 'Log Accessed Pages' option for the Web Filter Action named: FilterAction One
+    Please deactivate the option to skip logging of accessed pages for the Exception named: Sophos Services
+    Please deactivate the option to skip logging of blocked pages for the Exception named: Sophos Services
+    Done
+
 
 Note that FilterAction Three doesn't make an appearance.  This is because it isn't being used by any of the
 current Web Filter or Proxy Profiles, so no traffic is hitting it, so the tool doesn't [see or] report it.

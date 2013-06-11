@@ -1,8 +1,8 @@
 Gem::Specification.new do |s|
   s.name      = "utm-plc"
-  s.version   = '0.1.5'
+  s.version   = '0.2.1'
   s.platform  = Gem::Platform::RUBY
-  s.date      = Date.today.to_s
+  s.date      = Time.now.to_s
   s.authors   = ["Jeff Welling"]
   s.email     = ["jeff.welling@gmail.com"]
   s.homepage  = "https://github.com/jeffWelling/UTM-plc"
