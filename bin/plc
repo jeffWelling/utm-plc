@@ -6,5 +6,6 @@ if File.exist? File.join('lib', 'utm-plc.rb')
     $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 end
 require 'utm-plc'
+$logging=true
 
 run

@@ -39,6 +39,13 @@ Here is a general overview of how it works.
 				-) If the action doesn't log both accessed and logged pages, add to the list of results
 		5) Print results.
 
+### Does it have to have root? ###
+
+Sadly yes. One would hope that you could have read-only access to `cc` as `loginuser` but trying
+this simply results in a "Permission denied" error and `cc` fails to open. As an interface with
+WebAdmin is not yet available, root access is required to access the information from the
+back-end.
+
 ### What does it look like? ###
 
 Here, let me show you.  In this configuration, the main web filter (under Web Protection -> Web Filter)
